@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>capture</title>
+		<link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />
+		<style type="text/css">
+			.info {
+				border: solid 1px silver;
+			}
+			
+			div.info-top {
+				position: relative;
+				background: none repeat scroll 0 0 #F9F9F9;
+				border-bottom: 1px solid #CCC;
+				border-radius: 5px 5px 0 0;
+			}
+			
+			div.info-top div {
+				display: inline-block;
+				color: #333333;
+				font-size: 14px;
+				font-weight: bold;
+				line-height: 31px;
+				padding: 0 10px;
+			}
+			
+			div.info-top img {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				transition-duration: 0.25s;
+			}
+			
+			div.info-top img:hover {
+				box-shadow: 0px 0px 5px #000;
+			}
+			
+			div.info-middle {
+				font-size: 12px;
+				padding: 6px;
+				line-height: 20px;
+			}
+			
+			div.info-bottom {
+				height: 0px;
+				width: 100%;
+				clear: both;
+				text-align: center;
+			}
+			
+			div.info-bottom img {
+				position: relative;
+				z-index: 104;
+			}
+			
+			span {
+				margin-left: 5px;
+				font-size: 11px;
+			}
+			
+			.info-middle img {
+				float: left;
+				margin-right: 6px;
+			}
+			
+			li {
+				list-style: none;
+			}
+			
+			ul,li {
+				margin: 6px;
+				padding: 0
+			}
+			
+			 ::-webkit-scrollbar {
+				width: 0px
+			}
+			
+			.toolPanel {
+				position: absolute;
+				top: 60px;
+				right: 52px;
+				width: 70px;
+				padding-bottom: 0px;
+				background: white;
+				border: 1px solid #ddd;
+				font-size: 12px;
+				min-height: 100px;
+				z-index: 99;
+				box-shadow: 0 2px 2px rgba(0, 0, 0, .15);
+			}
+			
+			.markerPanel {
+				position: absolute;
+				top: 60px;
+				right: 143px;
+				width: 100px;
+				padding-bottom: 0px;
+				background: white;
+				border: 1px solid #ddd;
+				font-size: 12px;
+				min-height: 40px;
+				z-index: 99 box-shadow: 0 2px 2px rgba(0, 0, 0, .15);
+				display: none;
+			}
+			.btn{
+				color: white;
+				background-color: #4196ff;
+				border: 1px solid #30304626;
+				border-radius:5px
+			}
+		</style>
+
+		<script src="http://webapi.amap.com/maps?v=1.3&key=0250860ccb5953fa5d655e8acf40ebb7&plugin=AMap.MouseTool"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/niuniucapture.js"></script>
+		<script type="text/javascript" src="js/jquery.json-2.3.min.js"></script>
+		<script type="text/javascript" src="js/html2canvas.min.js"></script>
+		<script type="text/javascript" src="js/example.js"></script>
+
+	</head>
+
+	<body id="contbox">
+		<div id="container"></div>
+
+		<div style="position: absolute;margin-top: 20px;right: 52px;">
+			<button class="btn" id="capture1" style="margin-left: 125px;">手动截屏</button>
+			<a id="jietu" class="down" href="" download="downImg" style="display: none;">截图下载</a>
+
+			<button class="btn" id="capture2" style="margin-left: 50px;">自动截屏</button>
+			<a id="jietuAuto" class="down" href="" download="downImg" style="display: none;">截图下载</a>
+
+		</div>
+
+		<div class="toolPanel" id="tool-panel" style="z-index:999">
+			<div>
+				<ul class="toolUl">
+					<li href="#" id="drawSport" style="margin-left: 8px;"><em class="fa fa-map-marker" style="width: 15px;height: 26px"></em><span>绘点</span></li>
+					<li href="#" id="drawLine" style="margin-left: 8px"><em class="fa fa-pencil" style="width: 15px;height: 26px"></em><span>折线</span></li>
+					<li href="#" id="drawCircle" style="margin-left: 8px"><em class="fa fa-circle-o" style="width: 15px;height: 26px"></em><span>绘圆</span></li>
+					<li href="#" id="all_delete" style="margin-left: 8px"><em class="fa fa-trash" style="width: 15px;height: 26px"></em><span>清空</span></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="markerPanel" id="marker-panel">
+			<div style="width:100px;height:20px;border-bottom:1px solid #ccc;">
+				<span style="display: inline-block;float: left;font-size:9px;margin-left: 5px;margin-top: 3px">标记</span>
+				<span style="display: inline-block;float: right;font-size:15px;margin-right: 5px" id="marker_close">&times;</span>
+			</div>
+			<div style="padding:6px;width:18px; height:28px;margin-top: 5px;margin-left: 3px; float:left" id="markerPin">
+				<img id="marker_pin" src="img/marker/pin_location_red16.png" />
+			</div>
+			<div style="position:fixed;z-index: 9999;display: none" id="markerPin_div">
+				<img src="img/marker/pin_location_red16.png" />
+			</div>
+
+			<div style="padding: 5px;width:18px; height:28px;margin-top: 5px;margin-left: 1px; float:left;" id="markerMap">
+				<img id="marker_map" src="img/marker/102-map-marker16.png" />
+			</div>
+			<div style="position:fixed;z-index: 9999;display: none" id="markerMap_div">
+				<img src="img/marker/102-map-marker16.png" />
+			</div>
+
+			<div style="padding: 6px;width:18px; height:28px;margin-top: 4px;margin-left:3px;float:left;margin-bottom: 0px" id="markerFlag">
+				<img id="marker_flag" src="img/marker/634-flag-red16.png" />
+			</div>
+			<div style="position:fixed;z-index: 9999;display: none" id="markerFlag_div">
+				<img src="img/marker/634-flag-red16.png" />
+			</div>
+		</div>
+
+	</body>
+
+</html>
